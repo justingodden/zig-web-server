@@ -15,6 +15,8 @@ pub fn main() !void {
     const address = try Address.resolveIp("0.0.0.0", 8081);
     try stream_server.listen(address);
 
+    // const html = try readHTML(allocator, "src/index.html");
+
     var frames = std.ArrayList(*Connection).init(allocator);
     while (true) {
         const connection = try stream_server.accept();
@@ -158,4 +160,14 @@ fn handler(allocator: std.mem.Allocator, stream: net.Stream) !void {
         http_context.debugPrintRequest();
 
         try http_context.respond(Status.OK, null, "Hello from Zig!");
+}
+
+fn readHTML(allocator: std.mem.Allocator, path: []const u8) ![]const u8 {
+        var file = try std.fs.cwd().openFile(path, .{});
+        defer file.close();
+
+        const read_buf = try file.readToEndAlloc(allocator, 1024);
+        defer allocator.free(read_buf);
+
+        return read_buf;
 }
