@@ -15,6 +15,7 @@ pub fn build(b: *std.build.Builder) void {
     exe.setTarget(target);
     exe.setBuildMode(mode);
     exe.install();
+    exe.use_stage1 = true; // due to async not being in the self hosted compiler yet
 
     const run_cmd = exe.run();
     run_cmd.step.dependOn(b.getInstallStep());
